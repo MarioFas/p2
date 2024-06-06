@@ -31,33 +31,30 @@ public class CatalogoServlet extends HttpServlet {
 		try {
 			if(action!=null) {
 				if(action.equalsIgnoreCase("add")) {
-					bean.setNome(request.getParameter("nome"));
-					bean.setDescrizione(request.getParameter("descrizione"));
-					bean.setIva(request.getParameter("iva"));
-					bean.setPrezzo(Double.parseDouble(request.getParameter("prezzo")));
-					bean.setQuantità(Integer.parseInt(request.getParameter("quantità")));
-					bean.setPiattaforma(request.getParameter("piattaforma"));
-					bean.setGenere(request.getParameter("genere"));
-					bean.setImmagine(request.getParameter("img"));
-					bean.setDataUscita(request.getParameter("dataUscita"));
-					bean.setDescrizioneDettagliata(request.getParameter("descDett"));
+					bean.setNome(sanitizeInput(request.getParameter("nome")));
+					bean.setDescrizione(sanitizeInput(request.getParameter("descrizione")));
+					bean.setIva(sanitizeInput(request.getParameter("iva")));
+					bean.setPrezzo(Double.parseDouble(sanitizeInput(request.getParameter("prezzo"))));
+					bean.setQuantità(Integer.parseInt(sanitizeInput(request.getParameter("quantità"))));
+					bean.setPiattaforma(sanitizeInput(request.getParameter("piattaforma")));
+					bean.setGenere(sanitizeInput(request.getParameter("genere")));
+					bean.setImmagine(sanitizeInput(request.getParameter("img")));
+					bean.setDataUscita(sanitizeInput(request.getParameter("dataUscita")));
+					bean.setDescrizioneDettagliata(sanitizeInput(request.getParameter("descDett")));
 					bean.setInVendita(true);
 					prodDao.doSave(bean);
-				}
-				
-				else if(action.equalsIgnoreCase("modifica")) {
-					
-					bean.setIdProdotto(Integer.parseInt(request.getParameter("id")));
-					bean.setNome(request.getParameter("nome"));
-					bean.setDescrizione(request.getParameter("descrizione"));
-					bean.setIva(request.getParameter("iva"));
-					bean.setPrezzo(Double.parseDouble(request.getParameter("prezzo")));
-					bean.setQuantità(Integer.parseInt(request.getParameter("quantità")));
-					bean.setPiattaforma(request.getParameter("piattaforma"));
-					bean.setGenere(request.getParameter("genere"));
-					bean.setImmagine(request.getParameter("img"));
-					bean.setDataUscita(request.getParameter("dataUscita"));
-					bean.setDescrizioneDettagliata(request.getParameter("descDett"));
+				} else if(action.equalsIgnoreCase("modifica")) {
+					bean.setIdProdotto(Integer.parseInt(sanitizeInput(request.getParameter("id"))));
+					bean.setNome(sanitizeInput(request.getParameter("nome")));
+					bean.setDescrizione(sanitizeInput(request.getParameter("descrizione")));
+					bean.setIva(sanitizeInput(request.getParameter("iva")));
+					bean.setPrezzo(Double.parseDouble(sanitizeInput(request.getParameter("prezzo"))));
+					bean.setQuantità(Integer.parseInt(sanitizeInput(request.getParameter("quantità"))));
+					bean.setPiattaforma(sanitizeInput(request.getParameter("piattaforma")));
+					bean.setGenere(sanitizeInput(request.getParameter("genere")));
+					bean.setImmagine(sanitizeInput(request.getParameter("img")));
+					bean.setDataUscita(sanitizeInput(request.getParameter("dataUscita")));
+					bean.setDescrizioneDettagliata(sanitizeInput(request.getParameter("descDett")));
 					bean.setInVendita(true);
 					prodDao.doUpdate(bean);	
 				}
@@ -87,6 +84,18 @@ public class CatalogoServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doGet(request, response);
+	}
+	
+	private String sanitizeInput(String input) {
+		if (input != null) {
+			input = input.replaceAll("<", "&lt;")
+						 .replaceAll(">", "&gt;")
+						 .replaceAll("&", "&amp;")
+						 .replaceAll("\"", "&quot;")
+						 .replaceAll("'", "&#x27;")
+						 .replaceAll("/", "&#x2F;");
+		}
+		return input;
 	}
 
 }
