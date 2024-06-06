@@ -3,6 +3,8 @@ package it.unisa.control;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,6 +22,11 @@ import it.unisa.model.ProdottoDao;
 @WebServlet("/home")
 public class HomeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	private static final List<String> PROHIBITED_PATHS = Arrays.asList(
+	        "META-INF/context.xml",
+	        "WEB-INF/web.xml" //facilmente espandibile
+	    );
        
  
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -28,6 +35,10 @@ public class HomeServlet extends HttpServlet {
 		
 		ArrayList<ArrayList<ProdottoBean>> categorie = new ArrayList<>();
 		String redirectedPage = request.getParameter("page");
+		
+		if (isProhibitedPath(redirectedPage)) {
+            redirectedPage = "Home.jsp";
+        }
 		
 		try {
 			ArrayList<ProdottoBean> PS5 = dao.doRetrieveByPiattaforma("PlayStation 5");
@@ -59,5 +70,18 @@ public class HomeServlet extends HttpServlet {
 		
 		doGet(request, response);
 	}
+	
+	private boolean isProhibitedPath(String path) {
+        if (path == null) {
+            return false;
+        }
+        for (String prohibitedPath : PROHIBITED_PATHS) {
+            if (path.equalsIgnoreCase(prohibitedPath)) {
+                return true;
+            }
+        }
+     // Aggiungere ulteriori controlli se necessario, come pattern matching
+        return false;
+    }
 
 }
